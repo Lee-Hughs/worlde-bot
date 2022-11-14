@@ -1,0 +1,34 @@
+Things to think about
+
+1. What features/weights should we look for in potential words
+	- new info vs repeat info/wasted info
+2. How can we train/run in parallel on minikube.
+3. How should the game engine actually work. Store guesses in a max heap, keeping the best guess in the root node
+
+
+Parts:
+Wordle.py   - Actual playable wordle game (cli)
+Engine.py   - Something that takes in a current game state + guess, returns a score for the given guess
+Guesser.py  - Something that runs through all currently valid guesses, uses Engine.py to assign each of them a score, then puts them into a heap, and returns the root node of that heap
+Words.txt   - list of all valid words
+Weights.txt - Values of all weights used by Engine.py
+
+
+
+This could either be a RNN with backprop or it could be a simple genetic algorithm
+
+if it were a RNN, engine would be trying to predict the percentage of valid words left can be removed by a given guess
+
+ex: 300 valid words left. Engine predicts that if you guess "arrow" you will remove 150 of the valid words. This would be 150/300 or 0.5.
+	You guess "arrow" and receive new information from the game. Now you know that there are only 100 valid words left. So the correct percentage was 200/300 or 0.67.
+	The error or delta was 0.67 - 0.5 = 0.17
+
+	Real percentage = (Previous valid words - Current valid words) / Previous valid words. In our example that was (300-100)/300 or 200/300
+
+
+how to determine what letters guesses are valid:
+1. Remove all grey letters
+2. Guesses must include all orange letters
+3. Guesses must have all green letters in their correct locations
+4. Guesses must not have any orange letters in repeat locations
+
